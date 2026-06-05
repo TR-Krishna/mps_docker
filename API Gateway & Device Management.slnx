@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="DataCollectionService/DataCollectionService.csproj" />
+  <Project Path="EventService/EventService.csproj" />
+  <Project Path="Gateway.API/Gateway.API.csproj" />
+  <Project Path="MeterManagementService/MeterManagementService.csproj" />
+  <Project Path="ScheduleService/ScheduleService.csproj" />
+  <Project Path="UserManagementService/UserManagementService.csproj" />
+</Solution>

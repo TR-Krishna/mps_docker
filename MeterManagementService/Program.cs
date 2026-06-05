@@ -1,0 +1,153 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// SE MPS Mysuru — AMI Platform
+// MeterManagementService  |  Program.cs
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// Manages the full lifecycle of smart meters in the AMI system.
+// Covers: AURORA, REGOR, REGOR LTCT, ER300P HTCT, ORION, TAURUS, ATRIA, ER300P.
+//
+// PORT: 5011   |   ACCESSED VIA GATEWAY: /api/meters/**
+// ═══════════════════════════════════════════════════════════════════════════════
+
+using System.Text;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using MeterManagementService.Data;
+using MeterManagementService.Middleware;
+using MeterManagementService.Repositories;
+using MeterManagementService.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Threading.RateLimiting;
+
+var builder = WebApplication.CreateBuilder(args);
+var cfg = builder.Configuration;
+
+// ── Database ──────────────────────────────────────────────────────────────────
+builder.Services.AddDbContext<MeterDbContext>(o =>
+    o.UseNpgsql(cfg.GetConnectionString("MeterDb")));
+
+// ── Cache (in-memory, Redis-compatible interface) ─────────────────────────────
+builder.Services.AddDistributedMemoryCache();
+
+// ── JWT Validation (tokens issued by UMS) ────────────────────────────────────
+var jwt = cfg.GetSection("Jwt");
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true, ValidateAudience = true,
+        ValidateLifetime = true, ValidateIssuerSigningKey = true,
+        ValidIssuer    = jwt["Issuer"]   ?? "SE-MPS-UMS",
+        ValidAudience  = jwt["Audience"] ?? "SE-MPS-Platform",
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwt["Key"] ?? throw new InvalidOperationException("Jwt:Key missing")))
+    });
+builder.Services.AddAuthorization();
+
+// ── API Versioning ────────────────────────────────────────────────────────────
+builder.Services.AddApiVersioning(o =>
+{
+    o.DefaultApiVersion = new ApiVersion(1, 0);
+    o.AssumeDefaultVersionWhenUnspecified = true;
+    o.ReportApiVersions = true;
+}).AddApiExplorer(o =>
+{
+    o.GroupNameFormat = "'v'VVV";
+    o.SubstituteApiVersionInUrl = true;
+});
+
+// ── Rate Limiting ─────────────────────────────────────────────────────────────
+var rl = cfg.GetSection("RateLimiting");
+builder.Services.AddRateLimiter(o =>
+{
+    o.AddSlidingWindowLimiter("api", lo =>
+    {
+        lo.PermitLimit          = rl.GetValue("PermitLimit",   100);
+        lo.Window               = TimeSpan.FromMinutes(rl.GetValue("WindowMinutes", 1));
+        lo.SegmentsPerWindow    = 6;
+        lo.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        lo.QueueLimit           = rl.GetValue("QueueLimit", 10);
+    });
+    o.RejectionStatusCode = 429;
+});
+
+// ── Application Services ──────────────────────────────────────────────────────
+builder.Services.AddScoped<IMeterRepository, MeterRepository>();
+builder.Services.AddScoped<IMeterService,    MeterService>();
+
+// ── Swagger ───────────────────────────────────────────────────────────────────
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization", Type = SecuritySchemeType.Http,
+        Scheme = "bearer", BearerFormat = "JWT", In = ParameterLocation.Header,
+        Description = "JWT from UserManagementService. POST /api/ums/auth/token."
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { new OpenApiSecurityScheme { Reference = new OpenApiReference
+            { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() }
+    });
+    var xml = Path.Combine(AppContext.BaseDirectory,
+        $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
+    if (File.Exists(xml)) c.IncludeXmlComments(xml);
+});
+
+var app = builder.Build();
+
+// Auto-migrate in development
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    scope.ServiceProvider.GetRequiredService<MeterDbContext>().Database.Migrate();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+    app.UseSwagger();
+    app.UseSwaggerUI(o =>
+    {
+        foreach (var d in provider.ApiVersionDescriptions)
+            o.SwaggerEndpoint($"/swagger/{d.GroupName}/swagger.json",
+                $"Meter Management {d.GroupName.ToUpperInvariant()}");
+        o.DocumentTitle = "SE MPS — Meter Management";
+    });
+}
+
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers().RequireRateLimiting("api");
+app.Run();
+
+// ── Swagger per-version configurator ─────────────────────────────────────────
+public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
+{
+    private readonly IApiVersionDescriptionProvider _p;
+    public ConfigureSwaggerOptions(IApiVersionDescriptionProvider p) => _p = p;
+    public void Configure(SwaggerGenOptions o)
+    {
+        foreach (var d in _p.ApiVersionDescriptions)
+            o.SwaggerDoc(d.GroupName, new OpenApiInfo
+            {
+                Title = "Meter Management Service — SE MPS Mysuru",
+                Version = d.GroupName,
+                Description =
+                    "Smart meter lifecycle management for the AMI platform.\n\n" +
+                    "Covers: AURORA, REGOR, REGOR LTCT, ER300P HTCT, ORION, TAURUS, ATRIA.\n\n" +
+                    "v2 adds filtering by MeterType, Status, CommunicationType, Zone, SubstationId."
+            });
+    }
+}
