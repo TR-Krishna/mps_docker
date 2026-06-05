@@ -1,0 +1,36 @@
+services :
+  gateway :
+    build : ./Gateway.API
+    ports :
+      - "6000:8080"
+    depends_on  :
+      - usermanagement
+      - metermanagement
+      - datacollection
+      - eventservice
+      - scheduleservice
+
+  usermanagement :
+      build : ./UserManagementService
+      ports :
+        - "6001:8080" 
+  metermanagement :
+      build : ./MeterManagementService
+      ports :
+        - "6002:8080"
+  datacollection :
+      build : ./DataCollectionService
+      ports :
+        - "6003:8080"
+  eventservice :
+      build : ./EventService
+      ports : 
+        - "6004:8080"
+  scheduleservice : 
+      build : ./ScheduleService
+      ports :
+        - "6005:8080"
+
+
+  
+  
