@@ -20,6 +20,9 @@ jobs:
             registry: ghcr.io
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Publish Gateway 
+          run: dotnet publish -c Release -o ./Gateway.API/publish ./Gateway.API/Gateway.API.csproj
         
         - name: Build and Push Gateway
           uses: docker/build-push-action@v2
@@ -27,6 +30,9 @@ jobs:
             context: ./Gateway.API
             push: true
             tags: ghcr.io/tr-krishna/gateway-api:latest
+        
+        - name: Publish UserManagementService 
+          run: dotnet publish -c Release -o ./UserManagementService/publish ./UserManagementService/UserManagementService.csproj
 
         - name: Build and Push UserManagementService
           uses: docker/build-push-action@v2
@@ -35,6 +41,9 @@ jobs:
             push: true
             tags: ghcr.io/tr-krishna/user-management-service:latest
 
+        - name: DataCollectionService 
+          run: dotnet publish -c Release -o ./DataCollectionService/publish ./DataCollectionService/DataCollectionService.csproj
+
         - name: Build and Push DataCollectionService
           uses: docker/build-push-action@v2
           with: 
@@ -42,12 +51,18 @@ jobs:
             push: true
             tags: ghcr.io/tr-krishna/data-collection-service:latest
         
+        - name: Publish EventService
+          run: dotnet publish -c Release -o ./EventService/publish ./EventService/EventService.csproj
+
         - name: Build and Push EventService
           uses: docker/build-push-action@v2
           with: 
             context: ./EventService
             push: true
             tags: ghcr.io/tr-krishna/event-service:latest
+
+        - name: Publish ScheduleService
+          run: dotnet publish -c Release -o ./ScheduleService/publish ./ScheduleService/ScheduleService.csproj
       
         - name: Build and Push ScheduleService
           uses: docker/build-push-action@v2
