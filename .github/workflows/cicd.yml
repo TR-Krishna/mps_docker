@@ -77,7 +77,7 @@ jobs:
       steps:
         - name: Deploy 
           run: |
-                cd : C:\Users\SESA845697\Documents\mps_docker\API-Gateway-Device-Management-System-main
+                cd C:\Users\SESA845697\Documents\mps_docker\API-Gateway-Device-Management-System-main
                 docker compose pull
                 docker compose up -d
                 docker compose ps
