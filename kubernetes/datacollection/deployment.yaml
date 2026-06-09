@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: datacollection-deployment
+  namespace: mps
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: datacollection
+  template:   
+    metadata:
+      labels: 
+        app: datacollection
+    spec: 
+      containers: 
+        - name: datacollection
+          image: ghcr.io/tr-krishna/data-collection-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env: 
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: datacollection-secret
+                  key: jwt-secret

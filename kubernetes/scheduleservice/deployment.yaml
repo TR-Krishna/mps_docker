@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: scheduleservice-deployment
+  namespace: mps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:   
+      app: scheduleservice
+  template: 
+      metadata:   
+        labels: 
+          app: scheduleservice
+      spec: 
+        containers: 
+          - name: scheduleservice
+            image: ghcr.io/tr-krishna/schedule-service:latest
+            imagePullPolicy: Always
+            ports: 
+             - containerPort: 8080
+            env: 
+              - name: JWT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: scheduleservice-secrets
+                    key: jwt-secret
+  

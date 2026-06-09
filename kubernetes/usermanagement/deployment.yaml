@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement-deployment
+  namespace: mps
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: usermanagement
+  template: 
+    metadata:
+      labels:
+        app: usermanagement
+    spec: 
+      containers: 
+        - name: usermanagement
+          image: ghcr.io/tr-krishna/user-management-service:latest
+          imagePullPolicy: Always
+          ports: 
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: usermanagement-secrets
+                  key: jwt-secret
+           
