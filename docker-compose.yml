@@ -1,6 +1,8 @@
 services :
   gateway :
-    build : ./Gateway.API
+    # build : ./Gateway.API
+    image: krishnatr/gateway-api:latest
+    container_name: api-gateway-device-management-system
     ports :
       - "6000:8080"
     depends_on  :
@@ -11,23 +13,33 @@ services :
       - scheduleservice
 
   usermanagement :
-      build : ./UserManagementService
+      # build : ./UserManagementService
+      image: krishnatr/user-management-service:latest
+      container_name: user-management-service
       ports :
         - "6001:8080" 
   metermanagement :
-      build : ./MeterManagementService
+      # build : ./MeterManagementService
+      image: krishnatr/meter-management-service:latest
+      container_image: meter-management-service
       ports :
         - "6002:8080"
   datacollection :
-      build : ./DataCollectionService
+      # build : ./DataCollectionService
+      image: krishnatr/data-collection-service:latest
+      container_image: data-collection-service
       ports :
         - "6003:8080"
   eventservice :
-      build : ./EventService
+      # build : ./EventService
+      image: krishnatr/event-service:latest
+      container_name: event-service
       ports : 
         - "6004:8080"
   scheduleservice : 
-      build : ./ScheduleService
+      # build : ./ScheduleService
+      image: krishnatr/schedule-service:latest
+      container_name: schedule-service
       ports :
         - "6005:8080"
 
