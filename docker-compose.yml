@@ -21,13 +21,13 @@ services :
   metermanagement :
       # build : ./MeterManagementService
       image: krishnatr/meter-management-service:latest
-      container_image: meter-management-service
+      container_name: meter-management-service
       ports :
         - "6002:8080"
   datacollection :
       # build : ./DataCollectionService
       image: krishnatr/data-collection-service:latest
-      container_image: data-collection-service
+      container_name: data-collection-service
       ports :
         - "6003:8080"
   eventservice :
