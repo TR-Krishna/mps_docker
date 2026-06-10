@@ -4,9 +4,9 @@ on:
   push:
     branches: [ main ]
 
-permissions:
-   contents: read
-   packages: write
+# permissions:
+   # contents: read
+   # packages: write
 
 jobs: 
     build-and-push :
@@ -14,12 +14,18 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         
-        - name: Login to GHCR
+        # - name: Login to GHCR
+          # uses: docker/login-action@v2
+          # with: 
+            # registry: ghcr.io
+            # username: ${{ github.actor }}
+            # password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Login to DockerHub
           uses: docker/login-action@v2
           with: 
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
 
         - name: Publish Gateway 
           run: dotnet publish -c Release -o ./Gateway.API/publish ./Gateway.API/Gateway.API.csproj
@@ -29,7 +35,8 @@ jobs:
           with: 
             context: ./Gateway.API
             push: true
-            tags: ghcr.io/tr-krishna/gateway-api:latest
+            tags: krishnatr/gateway-api:latest
+            # tags: ghcr.io/tr-krishna/gateway-api:latest
         
         - name: Publish UserManagementService 
           run: dotnet publish -c Release -o ./UserManagementService/publish ./UserManagementService/UserManagementService.csproj
@@ -39,7 +46,8 @@ jobs:
           with: 
             context: ./UserManagementService
             push: true
-            tags: ghcr.io/tr-krishna/user-management-service:latest
+            tags: krishnatr/user-management-service:latest
+            # tags: ghcr.io/tr-krishna/user-management-service:latest
 
         - name: DataCollectionService 
           run: dotnet publish -c Release -o ./DataCollectionService/publish ./DataCollectionService/DataCollectionService.csproj
@@ -49,7 +57,8 @@ jobs:
           with: 
             context: ./DataCollectionService
             push: true
-            tags: ghcr.io/tr-krishna/data-collection-service:latest
+            tags: krishnatr/data-collection-service:latest
+            # tags: ghcr.io/tr-krishna/data-collection-service:latest
         
         - name: Publish EventService
           run: dotnet publish -c Release -o ./EventService/publish ./EventService/EventService.csproj
@@ -59,7 +68,8 @@ jobs:
           with: 
             context: ./EventService
             push: true
-            tags: ghcr.io/tr-krishna/event-service:latest
+            tags: krishnatr/event-service:latest
+            # tags: ghcr.io/tr-krishna/event-service:latest
 
         - name: Publish ScheduleService
           run: dotnet publish -c Release -o ./ScheduleService/publish ./ScheduleService/ScheduleService.csproj
@@ -69,7 +79,8 @@ jobs:
           with: 
             context: ./ScheduleService
             push: true
-            tags: ghcr.io/tr-krishna/schedule-service:latest
+            tags: krishnatr/schedule-service:latest
+            # tags: ghcr.io/tr-krishna/schedule-service:latest
 
     deploy:
       runs-on: self-hosted
