@@ -111,7 +111,6 @@ jobs:
                 kubectl rollout restart deployment/datacollection-deployment -n mps
                 kubectl rollout restart deployment/metermanagement-deployment -n mps
                 kubectl rollout restart deployment/usermanagement-deployment -n mps
-                kubectl rollout restart deployment/apigateway-deployment -n mps
                 # kubectl rollout status deployment/scheduleservice-deployment -n mps
                 # kubectl rollout status deployment/eventservice-deployment -n mps
                 # kubectl rollout status deployment/datacollection-deployment -n mps
