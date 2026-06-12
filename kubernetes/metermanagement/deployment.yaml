@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metermanageent-deployment
+  name: metermanagement-deployment
   namespace: mps
 spec: 
   replicas: 1
   selector: 
     matchLabels:
       app: metermanagement
-    template: 
+  template: 
       metadata: 
         labels: 
-          apps: metermanagement
+          app: metermanagement
       spec:
         containers:
           - name: metermanagement
