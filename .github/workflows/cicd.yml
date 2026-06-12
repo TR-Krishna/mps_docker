@@ -14,18 +14,18 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         
-        # - name: Login to GHCR
-          # uses: docker/login-action@v2
-          # with: 
-            # registry: ghcr.io
-            # username: ${{ github.actor }}
-            # password: ${{ secrets.GITHUB_TOKEN }}
-
-        - name: Login to DockerHub
+        - name: Login to GHCR
           uses: docker/login-action@v2
           with: 
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        # - name: Login to DockerHub
+        #   uses: docker/login-action@v2
+        #   with: 
+        #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+        #     password: ${{ secrets.DOCKERHUB_TOKEN }}
 
         - name: Publish Gateway 
           run: dotnet publish -c Release -o ./Gateway.API/publish ./Gateway.API/Gateway.API.csproj
@@ -35,8 +35,8 @@ jobs:
           with: 
             context: ./Gateway.API
             push: true
-            tags: krishnatr/gateway-api:latest
-            # tags: ghcr.io/tr-krishna/gateway-api:latest
+            # tags: krishnatr/gateway-api:latest
+            tags: ghcr.io/tr-krishna/gateway-api:latest
         
         - name: Publish UserManagementService 
           run: dotnet publish -c Release -o ./UserManagementService/publish ./UserManagementService/UserManagementService.csproj
@@ -46,8 +46,8 @@ jobs:
           with: 
             context: ./UserManagementService
             push: true
-            tags: krishnatr/user-management-service:latest
-            # tags: ghcr.io/tr-krishna/user-management-service:latest
+            # tags: krishnatr/user-management-service:latest
+            tags: ghcr.io/tr-krishna/user-management-service:latest
 
         - name: DataCollectionService 
           run: dotnet publish -c Release -o ./DataCollectionService/publish ./DataCollectionService/DataCollectionService.csproj
@@ -57,42 +57,9 @@ jobs:
           with: 
             context: ./DataCollectionService
             push: true
-            tags: krishnatr/data-collection-service:latest
-            # tags: ghcr.io/tr-krishna/data-collection-service:latest
+            # tags: krishnatr/data-collection-service:latest
+            tags: ghcr.io/tr-krishna/data-collection-service:latest
         
-        - name: Publish MeterManagementService 
-          run: dotnet publish -c Release -o ./MeterManagementService/publish ./MeterManagementService/MeterManagementService.csproj
-
-        - name: Build and Push MeterManagementService
-          uses: docker/build-push-action@v2
-          with: 
-            context: ./MeterManagementService
-            push: true
-            tags: krishnatr/meter-management-service:latest
-            # tags: ghcr.io/tr-krishna/meter-management-service:latest
-
-        - name: Publish EventService
-          run: dotnet publish -c Release -o ./EventService/publish ./EventService/EventService.csproj
-
-        - name: Build and Push EventService
-          uses: docker/build-push-action@v2
-          with: 
-            context: ./EventService
-            push: true
-            tags: krishnatr/event-service:latest
-            # tags: ghcr.io/tr-krishna/event-service:latest
-
-        - name: Publish ScheduleService
-          run: dotnet publish -c Release -o ./ScheduleService/publish ./ScheduleService/ScheduleService.csproj
-      
-        - name: Build and Push ScheduleService
-          uses: docker/build-push-action@v2
-          with: 
-            context: ./ScheduleService
-            push: true
-            tags: krishnatr/schedule-service:latest
-            # tags: ghcr.io/tr-krishna/schedule-service:latest
-
         - name: Publish MeterManagementService 
           run: dotnet publish -c Release -o ./MeterManagementService/publish ./MeterManagementService/MeterManagementService.csproj
 
@@ -103,6 +70,39 @@ jobs:
             push: true
             # tags: krishnatr/meter-management-service:latest
             tags: ghcr.io/tr-krishna/meter-management-service:latest
+
+        - name: Publish EventService
+          run: dotnet publish -c Release -o ./EventService/publish ./EventService/EventService.csproj
+
+        - name: Build and Push EventService
+          uses: docker/build-push-action@v2
+          with: 
+            context: ./EventService
+            push: true
+            # tags: krishnatr/event-service:latest
+            tags: ghcr.io/tr-krishna/event-service:latest
+
+        - name: Publish ScheduleService
+          run: dotnet publish -c Release -o ./ScheduleService/publish ./ScheduleService/ScheduleService.csproj
+      
+        - name: Build and Push ScheduleService
+          uses: docker/build-push-action@v2
+          with: 
+            context: ./ScheduleService
+            push: true
+            # tags: krishnatr/schedule-service:latest
+            tags: ghcr.io/tr-krishna/schedule-service:latest
+
+        - name: Publish MeterManagementService 
+          run: dotnet publish -c Release -o ./MeterManagementService/publish ./MeterManagementService/MeterManagementService.csproj
+
+        - name: Build and Push MeterManagementService
+          uses: docker/build-push-action@v2
+          with: 
+            context: ./MeterManagementService
+            push: true
+            tags: krishnatr/meter-management-service:latest
+            # tags: ghcr.io/tr-krishna/meter-management-service:latest
 
 
     deploy:
