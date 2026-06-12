@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventservice-deployment
+  namespace: mps
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventservice
+  template:
+    metadata:
+      labels:
+        app: eventservice
+    spec:
+      containers:
+        - name: eventservice
+          image: ghcr.io/tr-krishna/event-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: eventservice-secrets
+                  key: jwt-secret
+ 

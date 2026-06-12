@@ -37,6 +37,16 @@ jobs:
             push: true
             # tags: krishnatr/gateway-api:latest
             tags: ghcr.io/tr-krishna/gateway-api:latest
+
+        - name: Publish Event Service
+          run: dotnet publish -c Release -o ./EventService/publish ./EventService/EventService.csproj
+
+        - name: Build and EventService
+          uses: docker/build-push-action/@v2
+          with: 
+            context: ./EventService
+            push: true
+            tags: ghcr.io/tr-krishna/event-service:latest
         
         - name: Publish UserManagementService 
           run: dotnet publish -c Release -o ./UserManagementService/publish ./UserManagementService/UserManagementService.csproj
