@@ -74,6 +74,7 @@ jobs:
         - name: Publish EventService
           run: dotnet publish -c Release -o ./EventService/publish ./EventService/EventService.csproj
 
+
         - name: Build and Push EventService
           uses: docker/build-push-action@v2
           with: 
