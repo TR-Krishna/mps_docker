@@ -93,6 +93,18 @@ jobs:
             tags: krishnatr/schedule-service:latest
             # tags: ghcr.io/tr-krishna/schedule-service:latest
 
+        - name: Publish MeterManagementService 
+          run: dotnet publish -c Release -o ./MeterManagementService/publish ./MeterManagementService/MeterManagementService.csproj
+
+        - name: Build and Push MeterManagementService
+          uses: docker/build-push-action@v2
+          with: 
+            context: ./MeterManagementService
+            push: true
+            tags: krishnatr/meter-management-service:latest
+            # tags: ghcr.io/tr-krishna/meter-management-service:latest
+
+
     deploy:
       runs-on: self-hosted
       needs: build-and-push
@@ -104,13 +116,13 @@ jobs:
                 docker compose up -d
                 docker compose ps
 
-        - name: Deploy to Kubernetes
-          run : |
-                kubectl rollout restart deployment/scheduleservice-deployment -n mps
-                kubectl rollout restart deployment/eventservice-deployment -n mps
-                kubectl rollout restart deployment/datacollection-deployment -n mps
-                kubectl rollout restart deployment/metermanagement-deployment -n mps
-                kubectl rollout restart deployment/usermanagement-deployment -n mps
+        # - name: Deploy to Kubernetes
+          # run : |
+                # kubectl rollout restart deployment/scheduleservice-deployment -n mps
+                # kubectl rollout restart deployment/eventservice-deployment -n mps
+                # kubectl rollout restart deployment/datacollection-deployment -n mps
+                # kubectl rollout restart deployment/metermanagement-deployment -n mps
+                # kubectl rollout restart deployment/usermanagement-deployment -n mps
                 # kubectl rollout status deployment/scheduleservice-deployment -n mps
                 # kubectl rollout status deployment/eventservice-deployment -n mps
                 # kubectl rollout status deployment/datacollection-deployment -n mps

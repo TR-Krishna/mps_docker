@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metermanageent-deployment
+  namespace: mps
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: metermanagement
+    template: 
+      metadata: 
+        labels: 
+          apps: metermanagement
+      spec:
+        containers:
+          - name: metermanagement
+            image: ghcr.io/tr-krishna/meter-management-service:latest
+            imagePullPolicy: Always
+            ports:
+              - containerPort: 8080
+            env:
+              - name: JWT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: metermanagement-secrets
+                    key: jwt-secret
+
+
+
