@@ -101,8 +101,8 @@ jobs:
           with: 
             context: ./MeterManagementService
             push: true
-            tags: krishnatr/meter-management-service:latest
-            # tags: ghcr.io/tr-krishna/meter-management-service:latest
+            # tags: krishnatr/meter-management-service:latest
+            tags: ghcr.io/tr-krishna/meter-management-service:latest
 
 
     deploy:
