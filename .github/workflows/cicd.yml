@@ -127,19 +127,19 @@ jobs:
                 docker compose up -d
                 docker compose ps
 
-        # - name: Deploy to Kubernetes
-          # run : |
-                # kubectl rollout restart deployment/scheduleservice-deployment -n mps
-                # kubectl rollout restart deployment/eventservice-deployment -n mps
-                # kubectl rollout restart deployment/datacollection-deployment -n mps
-                # kubectl rollout restart deployment/metermanagement-deployment -n mps
-                # kubectl rollout restart deployment/usermanagement-deployment -n mps
-                # kubectl rollout status deployment/scheduleservice-deployment -n mps
-                # kubectl rollout status deployment/eventservice-deployment -n mps
-                # kubectl rollout status deployment/datacollection-deployment -n mps
-                # kubectl rollout status deployment/metermanagement-deployment -n mps
-                # kubectl rollout status deployment/usermanagement-deployment -n mps
-                # kubectl rollout status deployment/apigateway-deployment -n mps
+        - name: Deploy to Kubernetes
+          run : |
+                kubectl rollout restart deployment/scheduleservice-deployment -n mps
+                kubectl rollout restart deployment/eventservice-deployment -n mps
+                kubectl rollout restart deployment/datacollection-deployment -n mps
+                kubectl rollout restart deployment/metermanagement-deployment -n mps
+                kubectl rollout restart deployment/usermanagement-deployment -n mps
+                kubectl rollout status deployment/scheduleservice-deployment -n mps
+                kubectl rollout status deployment/eventservice-deployment -n mps
+                kubectl rollout status deployment/datacollection-deployment -n mps
+                kubectl rollout status deployment/metermanagement-deployment -n mps
+                kubectl rollout status deployment/usermanagement-deployment -n mps
+                kubectl rollout status deployment/apigateway-deployment -n mps
 
 
 
