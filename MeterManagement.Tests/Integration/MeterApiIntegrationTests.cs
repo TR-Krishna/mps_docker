@@ -1,9 +1,9 @@
-// ═══════════════════════════════════════════════════════════════════════════
+// ???????????????????????????????????????????????????????????????????????????
 // MeterManagement.Tests/Integration/MeterApiIntegrationTests.cs
-// ═══════════════════════════════════════════════════════════════════════════
+// ???????????????????????????????????????????????????????????????????????????
 // Integration tests: real in-memory HTTP server, real middleware pipeline,
 // in-memory database (no PostgreSQL), full JWT flow.
-// ═══════════════════════════════════════════════════════════════════════════
+// ???????????????????????????????????????????????????????????????????????????
 
 using System.Net;
 using System.Net.Http.Json;
@@ -20,7 +20,7 @@ using Xunit;
 
 namespace MeterManagement.Tests.Integration;
 
-// ── Test server factory ───────────────────────────────────────────────────────
+// ?? Test server factory ???????????????????????????????????????????????????????
 public class MeterApiFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -29,30 +29,30 @@ public class MeterApiFactory : WebApplicationFactory<Program>
         builder.ConfigureServices(services =>
         {
             // Remove PostgreSQL, replace with in-memory DB
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<MeterDbContext>));
-            if (descriptor is not null) services.Remove(descriptor);
+            //var descriptor = services.SingleOrDefault(
+            //    d => d.ServiceType == typeof(DbContextOptions<MeterDbContext>));
+            //if (descriptor is not null) services.Remove(descriptor);
 
-            services.AddDbContext<MeterDbContext>(o =>
-                o.UseInMemoryDatabase("TestMeterDb_" + Guid.NewGuid()));
+            //services.AddDbContext<MeterDbContext>(o =>
+            //    o.UseInMemoryDatabase("TestMeterDb_" + Guid.NewGuid()));
 
-            // Seed test DB
-            var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<MeterDbContext>();
-            db.Database.EnsureCreated();
+            //// Seed test DB
+            //var sp = services.BuildServiceProvider();
+            //using var scope = sp.CreateScope();
+            //var db = scope.ServiceProvider.GetRequiredService<MeterDbContext>();
+            //db.Database.EnsureCreated();
         });
     }
 }
 
-// ── Tests ────────────────────────────────────────────────────────────────────
+// ?? Tests ????????????????????????????????????????????????????????????????????
 public class MeterApiIntegrationTests : IClassFixture<MeterApiFactory>
 {
     private readonly HttpClient _client;
     public MeterApiIntegrationTests(MeterApiFactory factory)
         => _client = factory.CreateClient();
 
-    // ── Helper: get JWT by calling the real UMS (mocked inline) ──────────
+    // ?? Helper: get JWT by calling the real UMS (mocked inline) ??????????
     // Since UMS is a separate service, integration tests call the Meter API
     // directly with a pre-constructed JWT matching test config.
     // We simulate this by embedding valid credentials in test config.
@@ -85,7 +85,7 @@ public class MeterApiIntegrationTests : IClassFixture<MeterApiFactory>
         return new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
+    // ?????????????????????????????????????????????????????????????????????
     [Fact]
     public async Task GetMeters_WithoutToken_Returns401()
     {
@@ -123,7 +123,7 @@ public class MeterApiIntegrationTests : IClassFixture<MeterApiFactory>
             IsSmart       = true
         };
 
-        // POST — create
+        // POST � create
         var createResp = await _client.PostAsJsonAsync("/api/v1/meters", dto);
         createResp.StatusCode.Should().Be(HttpStatusCode.Created);
         createResp.Headers.Location.Should().NotBeNull();
@@ -180,7 +180,7 @@ public class MeterApiIntegrationTests : IClassFixture<MeterApiFactory>
         {
             SerialNumber  = serial, Model = "REGOR",
             MeterType     = MeterType.ThreePhaseWholeCurrent,
-            AccuracyClass = "Class 1.0", VoltageRating = "3×240V (P-N)",
+            AccuracyClass = "Class 1.0", VoltageRating = "3�240V (P-N)",
             CurrentRating = "10-60A", Standards = "IS 16444 Part 1"
         };
 
@@ -211,7 +211,7 @@ public class MeterApiIntegrationTests : IClassFixture<MeterApiFactory>
         await _client.PostAsJsonAsync("/api/v1/meters", new MeterCreateDto
         {
             SerialNumber = s2, Model = "REGOR", MeterType = MeterType.ThreePhaseWholeCurrent,
-            AccuracyClass = "Class 1.0", VoltageRating = "3×240V (P-N)",
+            AccuracyClass = "Class 1.0", VoltageRating = "3�240V (P-N)",
             CurrentRating = "10-60A", Standards = "IS 16444 Part 1"
         });
 

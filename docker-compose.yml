@@ -24,6 +24,29 @@ services :
       container_name: meter-management-service
       ports :
         - "6002:8080"
+      depends_on : 
+          meter_api_db :
+            condition : service_healthy
+      environment: 
+             - ASPNETCORE_ENVIRONMENT=Development
+             - ConnectionStrings__MeterDb=Host=meter_api_db;Port=5432;Database=SE_MPS_MeterDb;Username=postgres;Password=password
+  
+  meter_api_db : 
+      image : postgres:15
+      container_name: meter_api_db
+      restart : always
+      environment : 
+        POSTGRES_DB : SE_MPS_MeterDb
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: password
+      volumes:
+        - meterapi_pgdata:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
   datacollection :
       # build : ./DataCollectionService
       image: krishnatr/data-collection-service:latest
@@ -42,7 +65,8 @@ services :
       container_name: schedule-service
       ports :
         - "6005:8080"
-
+volumes:
+  meterapi_pgdata: 
 
   
   
