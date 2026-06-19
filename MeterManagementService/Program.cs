@@ -112,7 +112,7 @@ if (app.Environment.IsDevelopment())
     scope.ServiceProvider.GetRequiredService<MeterDbContext>().Database.Migrate();
 }
 
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
     app.UseSwagger();
