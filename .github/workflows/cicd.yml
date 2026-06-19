@@ -139,7 +139,6 @@ jobs:
                 kubectl rollout status deployment/datacollection-deployment -n mps
                 kubectl rollout status deployment/metermanagement-deployment -n mps
                 kubectl rollout status deployment/usermanagement-deployment -n mps
-                kubectl rollout status deployment/apigateway-deployment -n mps
 
 
 
