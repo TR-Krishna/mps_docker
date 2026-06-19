@@ -1,12 +1,11 @@
 # SE MPS Mysuru — AMI Platform
 ## API Gateway & Microservices (Internship Project)
 
-
 > **Schneider Electric MPS Mysuru · EcoSEnter HES Platform**
 > .NET 8 · YARP · PostgreSQL · JWT · In-Memory Cache · xUnit · Moq
 
 ---
-
+d
 
 ## What This Project Is
 
