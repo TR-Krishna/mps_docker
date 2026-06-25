@@ -25,6 +25,12 @@ spec:
                   secretKeyRef:
                     name: metermanagement-secrets
                     key: jwt-secret
-
+            resources:
+              requests: 
+                cpu: "10m"
+                memory: "256Mi"
+              limits: 
+                cpu: "500m"
+                memory: "256Mi"
 
 
