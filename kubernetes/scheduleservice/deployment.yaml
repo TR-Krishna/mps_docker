@@ -25,4 +25,10 @@ spec:
                   secretKeyRef:
                     name: scheduleservice-secrets
                     key: jwt-secret
-  
+            resources: 
+              requests: 
+                cpu: "10m"
+                memory: "128Mi"
+              limits: 
+                cpu: "500m"
+                memory: "256Mi"
