@@ -20,7 +20,8 @@ Smart Meters (AURORA/REGOR/ORION)
   ? RF Mesh / PLC ? DCU/Gateway ? WAN
   or
   ? 4G/NB-IoT SIM ? Cellular Tower ? WAN
-                                        ?
+                                        
+                                        
                               EcoSEnter Head-End System (HES)
                               [collects DLMS data, manages meters,
                                processes tamper/alarms, pushes to MDMS]
